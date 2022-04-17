@@ -1,3 +1,5 @@
+# Dive into docker
+
 ## Installing docker on MacOS
 
 docker.com
@@ -41,11 +43,13 @@ _Namespaces_ and _Control groups_ are specific to _Linux_, not to _Windwows_ or 
 When we've installed docker, we've installed Linux vm
 All containers will be created inside this vm
 
+# Manipulating containers with the docker client
+
 ## Docker run in detail
 
 `docker run <image name>` - creating and running a container from an image
 
-## overriding_default_commands
+## overriding default commands
 
 `docker run busybox echo hi there`
 
@@ -191,6 +195,8 @@ if we want additional commands to be executable:
 containers don't share file system space
 (touch hi-there - create file)
 
+# Building custom images throught docker server
+
 ## Creating docker images
 
 <img src="./images/creating_docker_images_1.png">
@@ -198,3 +204,156 @@ containers don't share file system space
 <img src="./images/creating_docker_images_2.png">
 
 ## Building a dockerfile
+
+redis-image / Dockerfile
+
+```
+# Use an existing docker image as a base
+From alpine
+
+# Download and install a dependency
+RUN apk add --update redis
+
+# Tell the image what todo whet it starts as a container
+CMD ["redis-server"]
+```
+
+`docker build .`
+take container id
+
+`docker run <container_id>`
+
+## Dockerfile teardown
+
+<img src="./images/dockerfile_teadown_1.png">
+
+`FROM` - image used as a base
+`RUN` - command while preparing custom image
+`CMD` - what to execute when image is used to instanstiate a new container
+
+## What's a base image
+
+<img src="./image/whats_a_base_image_1.png">
+
+`FROM alpine` - _apline_ includes set of programms usefull for installing and installing programs
+
+`RUN apk add --update redis` - download and install redis.
+`apk` is not a docker command (apache package kit). It is a package manager preinstalled on _apline_
+
+## The Build Process in Detail
+
+<img src="./images/the_build_process_in_detail_1.png">
+
+`docker build .` - giving docker file to docker cli
+
+_build_ - generate image from docker file
+
+. - docker context
+
+`FROM alpine` - first docker server looked at local build cache if it has downloaded _aplpine_ image. It didn't find local image, so it than reached to docker hub - public repository of images.
+
+---
+
+except for _FROM_ we have intermediate containers
+
+<img src="./images/the_build_process_in_detail_2.png">
+
+With every additional instruction (RUN and CMD so far):
+
+- we take the image that was generated during previous step and create a new container from it
+- execute startup command or make a change in file system in that container
+- than make a snapshot of that container and make in image that will be used by next step
+- image from last step is the resultant image
+  <img src="./images/the_build_process_in_detail_3.png">
+
+## A brief recap
+
+<img src="./images/a_brief_recap_1.png">
+<img src="./images/a_brief_recap_2.png">
+<img src="./images/a_brief_recap_3.png">
+
+## Rebuilds with cache
+
+In the previous file we'll add `RUN apk add --update gcc`
+
+_Dockerfile_
+
+```
+# Use an existing docker image as a base
+From alpine
+
+# Download and install a dependency
+RUN apk add --update redis
+RUN apk add --update gcc
+
+# Tell the image what todo whet it starts as a container
+CMD ["redis-server"]
+```
+
+and run `docker build .`
+
+note: we'll get `CACHED`:
+
+```
+ => [internal] load build definition from Dockerfile                                                                                 0.0s
+ => => transferring dockerfile: 264B                                                                                                 0.0s
+ => [internal] load .dockerignore                                                                                                    0.0s
+ => => transferring context: 2B                                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/alpine:latest                                                                     1.6s
+ => [auth] library/alpine:pull token for registry-1.docker.io                                                                        0.0s
+ => [1/3] FROM docker.io/library/alpine@sha256:4edbd2beb5f78b1014028f4fbb99f3237d9561100b6881aabbf5acce2c4f9454                      0.0s
+ => CACHED [2/3] RUN apk add --update redis                                                                                          0.0s
+ => [3/3] RUN apk add --update gcc                                                                                                  11.7s
+ => exporting to image                                                                                                               0.7s
+ => => exporting layers                                                                                                              0.7s
+ => => writing image sha256:4287e63e5cf88e5f26cbf1a81bfee84442b045606b0b5adde8a8106be368436d
+```
+
+this means that image after `step RUN apk add --update redis` was already built, so it can be used from cache
+
+## Tagging an image
+
+`docker build .`
+get output
+`writing image sha256:4287e63e5cf88e5f26cbf1a81bfee84442b045606b0b5adde8a8106be368436d `  
+thant run
+`docker run 4287e63e5cf`
+
+<img src="./images/tagging_an_image_1.png">
+
+convention to name tags:
+<img src="./images/tagging_an_image_2.png">
+
+create tagged container :
+`docker build -t orenkole/redis:latest .`
+
+now we can run container :
+`docker run orenkole/redis`
+
+## Manual Image Generation with Docker Commit
+
+instead of file Dockerfile, we'll use console:
+`docker run -it alpine sh`
+`# apk add --update redis`
+
+open second terminal and take running container, assign default command and create an image:
+
+```
+docker ps
+docker commit -c 'CMD ["redis-server"]' a38362d3aaee
+// sha256:739e7e63e67fdad7ed21fe35147e93f05592f96ca3388ef4f701dceca7da6b95
+docker run 739e7e63e67
+// 1:M 17 Apr 2022 16:14:09.914 * Ready to accept connections
+```
+
+`-c` - specify default command
+
+# Making real project with docker
+
+## Project outline
+
+<img src="./images/project_outline_1.png">
+
+Disclaimer: We're going to do a few things slightly wrong!
+
+## Node server setup
