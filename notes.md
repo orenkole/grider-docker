@@ -207,9 +207,9 @@ containers don't share file system space
 
 redis-image / Dockerfile
 
-```
+```docker
 # Use an existing docker image as a base
-From alpine
+FROM alpine
 
 # Download and install a dependency
 RUN apk add --update redis
@@ -278,9 +278,9 @@ In the previous file we'll add `RUN apk add --update gcc`
 
 _Dockerfile_
 
-```
+```docker
 # Use an existing docker image as a base
-From alpine
+FROM alpine
 
 # Download and install a dependency
 RUN apk add --update redis
@@ -294,7 +294,7 @@ and run `docker build .`
 
 note: we'll get `CACHED`:
 
-```
+```d
  => [internal] load build definition from Dockerfile                                                                                 0.0s
  => => transferring dockerfile: 264B                                                                                                 0.0s
  => [internal] load .dockerignore                                                                                                    0.0s
@@ -315,8 +315,12 @@ this means that image after `step RUN apk add --update redis` was already built,
 
 `docker build .`
 get output
-`writing image sha256:4287e63e5cf88e5f26cbf1a81bfee84442b045606b0b5adde8a8106be368436d `  
-thant run
+
+```d
+writing image sha256:4287e63e5cf88e5f26cbf1a81bfee84442b045606b0b5adde8a8106be368436d
+```
+
+than run
 `docker run 4287e63e5cf`
 
 <img src="./images/tagging_an_image_1.png">
@@ -338,7 +342,7 @@ instead of file Dockerfile, we'll use console:
 
 open second terminal and take running container, assign default command and create an image:
 
-```
+```d
 docker ps
 docker commit -c 'CMD ["redis-server"]' a38362d3aaee
 // sha256:739e7e63e67fdad7ed21fe35147e93f05592f96ca3388ef4f701dceca7da6b95
@@ -357,3 +361,237 @@ docker run 739e7e63e67
 Disclaimer: We're going to do a few things slightly wrong!
 
 ## Node server setup
+
+create:
+_simpleweb / package.json_
+
+```json
+{
+  "dependencies": {
+    "express": "*"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
+```
+
+_simpleweb / index.js_
+
+```javascript
+const express = require("express");
+
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Hi there");
+});
+
+app.listen(8080, () => {
+  console.log("Listening on port 8080");
+});
+```
+
+## A few planned errors
+
+<img src="./images/a_few_planned_errors_1.png">
+<img src="./images/a_few_planned_errors_2.png">
+
+_simpleweb / Dockerfile_
+
+```docker
+
+# Specify base image
+
+FROM alpine
+
+# Install some dependencies
+
+RUN npm install
+
+# Default command
+
+CMD ["npm", "start"]
+
+```
+
+we'll get an error while build image, because there is no copy of npm available (in alpine)
+
+```d
+
+docker build .
+// #5 0.252 /bin/sh: npm: not found
+
+```
+
+## Base image issues
+
+**_alpine_** has no **_npm_**
+
+we have 2 options:
+
+1. find image with npm
+2. use alpine to get npm
+
+find image with npm:
+https://hub.docker.com/_/node
+
+get **_node:apline_** (stripped down version of _node_ image)
+
+simpleweb / Dockerfile
+
+```docker
+# Specify base image
+FROM node:alpine
+
+# Install some dependencies
+RUN npm install
+
+# Default command
+CMD ["npm", "start"]
+```
+
+`docker run .` - we get error `npm ERR! Tracker "idealTree" already exists`
+
+## A few missing files
+
+## Copying build files
+
+<img src="./images/copying_build_files_1.png">
+
+`COPY` - move files from local machine to temporary container created during buid process
+
+---
+
+error occured: `npm ERR! Tracker "idealTree" already exists`
+https://stackoverflow.com/questions/57534295/npm-err-tracker-idealtree-already-exists-while-creating-the-docker-image-for
+
+```docker
+# Specify base image
+FROM node:alpine
+
+# Install some dependencies
+WORKDIR /Users/badger/Desktop/study/docker-grider/simpleweb
+COPY ./ ./
+RUN npm install
+
+# Default command
+CMD ["npm", "start"]
+```
+
+create and run container:
+
+```d
+docker build -t orenkole/simpleweb .
+docker run orenkole/simpleweb
+// Listening on port 8080
+```
+
+## Container port mapping
+
+but we can't access :
+
+<img src="./images/copying_build_files_2.png">
+
+By default no traffic into container.
+Container has it's own set of ports
+
+<img src="./images/container_post_mapping_1.png">
+
+<img src="./images/container_post_mapping_2.png">
+
+<img src="./images/container_post_mapping_4.png">
+
+`> docker run -p 8080:8080 orenkole/simpleweb`
+
+ports don't have to be indentical
+
+## Specifying a Working Directory
+
+==WORKDIR==
+Start a terminal inside container:
+
+```
+docker run -it orenkole/simpleweb sh
+ls
+```
+
+we see that there is already files of image, so we can accidentically ovewrite them with copied files.
+We have to specify inner directory for our files
+
+<img src="./images/specifying_a_working_directory_1.png">
+
+```dockerfile
+# Specify base image
+FROM node:alpine
+
+WORKDIR /usr/app
+
+# Install some dependencies
+COPY ./ ./
+RUN npm install
+
+# Default command
+CMD ["npm", "start"]
+```
+
+rebuild image:
+
+```d
+// build image
+docker build -t orenkole/simpleweb
+
+// run container
+docker run -p 8081:8081 orenkole/simpleweb
+
+// see list of running containers
+docker ps
+
+// open terminal from container
+docker exec -it <container_id> sh
+```
+
+<img src="./images/specifying_a_working_directory_2.png">
+
+## Unnecessary rebuilds
+
+we just change in _index.js_
+
+`res.send("Hi there");`
+to
+`res.send("Bye there");`
+
+This invalidates `COPY` step
+
+and runs:
+
+- copying
+- `npm install`
+  what is not needed
+
+<img src="./images/unneccessary_rebuilds_1.png">
+
+## Minimizing Cache Busting and Rebuilds
+
+Since `npm i` needs only _package.json_, we'll copy only this file
+
+```docker
+# Install some dependencies
+COPY ./package.json ./
+RUN npm install
+COPY ./ ./
+```
+
+rebuild image
+`docker build -t orenkole/simpleweb .`
+
+## App overview
+
+<img src="./images/app_overview_1.png">
+
+architecture when scaling
+<img src="./images/app_overview_2.png">
+
+## App server starter code
+
+<img src="./images/app_server_starter_code_1.png">
