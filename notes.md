@@ -684,14 +684,14 @@ Dash (`-`) means array in yml file
 _docker-compose.yml_
 
 ```yml
-version: '3'
+version: "3"
 services:
-	redis-server:
-		image: 'redis'
-	node-app:
-		build: .
-		ports:
-			- "4002:8082"
+  redis-server:
+    image: "redis"
+  node-app:
+    build: .
+    ports:
+      - "4002:8082"
 ```
 
 ## Networking with docker-compose
@@ -710,3 +710,74 @@ const client = redis.createClient({
 
 _express_ will try to reach 'redis-server' host, Redis will the connection request from node app it and will redirect it to container running redis-server
 By default port of redis-server is ==6379==
+
+## Docker Compose Commands
+
+<img src="./images/docker_compose_commands_1.png">
+
+instead of `docker run ...` will use `docker-compose up ...`
+
+_docker-compose_ will start all container listed in _docker-compose.yml_
+
+```bash
+docker build
+docker run myimage
+```
+
+replace to
+`docker-compose run --build`
+
+---
+
+`docker-compose up`
+we'll see docker creates network that joins different containers together
+<img src="./images/docker_compose_commands_2.png">
+
+We can make requests
+<img src="./images/docker_compose_commands_3.png">
+
+## Using -d to Detach the Container
+
+Another useful parameter to pass to docker run is the ==-d== flag. This flag causes Docker to start the container in "detached" mode. A simple way to think of this is to think of -d as running the container in "the background," just like any other Unix process.
+
+Rather than hijacking the terminal and showing the application's output, Docker will start the container in detached mode.
+
+```d
+$ docker run -d redis
+19267ab19aedb852c69e2bd6a776d9706c540259740aaf4878d0324f9e95af10
+$ docker run -d redis
+0f3cb6199d442822ecfc8ce6a946b72e07cf329b6516d4252b4e2720058c702b
+```
+
+The -d flag is useful when starting containers that you wish to run for long periods of time. Which, if you are using Docker to run services, is generally the case. In attached mode, a container is linked with the terminal session.
+
+Using -d is a simple way to detach the container on start.
+
+## Stopping Docker Compose Containers
+
+Launch in background:
+`docker-compoes up -d`
+
+Stop containers:
+`docker-compose down`
+
+example:
+
+```d
+docker compose up -d
+docker ps // see running containers
+docker-compose down
+docker ps // no running containers
+```
+
+## Container Maintenance with Compose
+
+Restart container when app inside throws error
+
+_index.js_
+`process.exit(0);`
+
+run with _--build_ because we changed source code
+`docker-compose up --build`
+
+<img src="./images/container_maintanance_with_compose_1.png">
