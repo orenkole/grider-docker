@@ -595,3 +595,118 @@ architecture when scaling
 ## App server starter code
 
 <img src="./images/app_server_starter_code_1.png">
+
+## App server starter code
+
+```javascript
+const express = require("express");
+const redis = require("redis");
+
+const app = express();
+const client = redis.createClient();
+client.set("visits", 0);
+
+app.get("/", (req, res) => {
+  client.get("visits", (err, visits) => {
+    res.send("Number of visits is " + visits);
+    client.set("visits", parseInt(visits) + 1);
+  });
+});
+
+app.listen(8082, () => {
+  console.log("Listening on port 8082");
+});
+```
+
+## Assembling docker file
+
+```docker
+FROM node:alpine
+
+WORKDIR '/app'
+
+COPY package.json .
+RUN npm install
+COPY . .
+
+CMD ["npm", "start"]
+```
+
+`% docker build -t orenkole/visits:latest .`
+
+## Introducing docker compose
+
+we'll get an error
+`docker run orenkole/vists`
+
+```d
+Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1195:16)
+Emitted 'error' event on RedisClient instance at:
+```
+
+There is no redis server to connect to
+We'll start a separate container for redis
+`docker run redis`
+
+we need connection between two containers (redis and app containers)
+
+Options to connect containers:
+
+- use docker cli network features
+- use ==Docker Compose==
+
+Docker Compose is installed with docker. It's a cli
+
+## Docker compose files
+
+<img src="./images/docker_compose_files_1.png">
+
+There is special syntax for _docker-compose.yml_
+
+<img src="./images/docker_compose_files_2.png">
+
+_docker-copmose.yml_
+version of docker-compose:
+`version: '3'`
+
+`services` take form of docker containers, they are not docker containers, they are liky type of docker container
+
+This means look for an Dockerfile in current directory and use it to build an image, that will be used for _node-app_ container:
+
+```yml
+	node-app:
+		build: .
+```
+
+Dash (`-`) means array in yml file
+
+_docker-compose.yml_
+
+```yml
+version: '3'
+services:
+	redis-server:
+		image: 'redis'
+	node-app:
+		build: .
+		ports:
+			- "4002:8082"
+```
+
+## Networking with docker-compose
+
+By defining services in one _docker-compose.yml_ file those services will be in one network. They don't have to open any ports between them
+
+_index.js_
+specify location of redis serve
+
+```javascript
+const client = redis.createClient({
+  host: "redis-server",
+  port: 6379,
+});
+```
+
+_express_ will try to reach 'redis-server' host, Redis will the connection request from node app it and will redirect it to container running redis-server
+By default port of redis-server is ==6379==
