@@ -781,3 +781,47 @@ run with _--build_ because we changed source code
 `docker-compose up --build`
 
 <img src="./images/container_maintanance_with_compose_1.png">
+
+`docker ps`
+We see that our node-app container is not running, and redis container is running
+
+## Automatic container restarts
+
+_index.js_
+
+```javascript
+process.exit(0);
+```
+
+_0_ - means we intended to exit, there is no error. Depending on if this is 0 docker will decide if to restart our container
+
+There 4 ==restart policies==
+<img src="./images/automatic_container_restarts_1.png">
+
+_docker-compose.yml_
+
+```yml
+version: "3"
+services:
+  redis-server:
+    image: "redis"
+  node-app:
+    restart: always
+    build: .
+    ports:
+      - "4002:8082"
+```
+
+now on it will restart
+<img src="./images/automatic_container_restarts_2.png">
+
+---
+
+Restart policies:
+
+- "no"
+- always
+- on-failure
+- unless-stopped
+
+note: "no" in quotes, because _no_ in yml is _false_
