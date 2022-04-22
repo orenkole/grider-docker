@@ -941,3 +941,48 @@ command modification:
 
 `-v $(pwd):/app` when there is `:` we say map _app_ folder from container to _pwd_ of local files (remember we've deleted node_modules from local files, only container has it)
 `-v /app/node_modules` - when there is no `:` we say don't link to local files, just use files from container
+
+## Shorthand with docker compose
+
+plain docker command
+`docker run -p 3000:3000 -v /app/node_modules -v $(pwd):/app <image_id>`
+
+we'll replace with docker-compose
+create file
+_docker-compose.yml_
+
+```yml
+version: "3"
+services:
+  web:
+    # error: we don't have dockerfile, we have Dockerfiled.dev
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - .:/app
+```
+
+## Overriding dockerfile selection
+
+`context`: where files should be pulled from relative to _docker-compose.yml_
+
+_docker-compose.yml_
+
+```yml
+version: "3"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - .:/app
+```
+
+and build an image
+`docker-compose up`
