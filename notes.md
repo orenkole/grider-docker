@@ -862,3 +862,40 @@ cd frontend
 `npm run start` - starts up a development server
 `npm run test` - run tests
 `npm run build` - buils a **production** version of the application
+
+## Creating dev docker file
+
+<img src="./images/creating_dev_docker_file_1.png">
+
+_fronend / Dockerfile.dev_
+
+```docker
+FROM node:16-alpine
+WORKDIR '/app'
+COPY package.json .
+RUN npm install
+COPY . .
+CMD ["npm", "run", "start"]
+```
+
+---
+
+`docker run build .`
+will cause an error:
+<img src="./images/creating_dev_docker_file_2.png">
+
+solution: add ==-f== flag for 'file'
+`docker build -f Dockerfile.dev .`
+
+## Duplicating dependencies
+
+`docker build -f Dockerfile.dev .`
+will cause
+
+<img src="./images/duplicating_dependencies_1.png">
+
+we didn't see this in the past because we didn't install any dependencirs in a working folder. Earlier we relied on docker to install dependencies into image when it was intially created.
+In our present case we have 2 copies of dependencies, so we delete **node_modules**
+
+run again
+`docker build -f Dockerfile.dev .`
