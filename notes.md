@@ -830,3 +830,13 @@ note: "no" in quotes, because _no_ in yml is _false_
 
 `docker-compose ps` - check list of containers
 must be ran from location where _docker-compose.yml_ is located
+
+## Development Workflow
+
+<img src="./images/Development_Workflow_1.png">
+<img src="./images/Development_Workflow_2.png">
+<img src="./images/Development_Workflow_3.png">
+
+## Docker's purpose
+
+<img src="./images/dockers_workflow_1.png">
