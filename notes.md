@@ -899,3 +899,45 @@ In our present case we have 2 copies of dependencies, so we delete **node_module
 
 run again
 `docker build -f Dockerfile.dev .`
+
+## Starting the container
+
+`docker run <image_id>`
+
+```
+// You can now view frontend in the browser.
+
+  Local:            http://localhost:3000
+```
+
+`docker run -p 3000:3000 <image_id>`
+
+---
+
+If we change _App.js_, these **changes won't be reflected** in container
+
+We need to **propagate changes from source code to container**
+
+## Docker volumes
+
+With volumes we won't copy code, instead in our container we'll have placeholders
+
+Before:
+<img src="./images/docker_volumes_1.png">
+
+With volumes
+<img src="./images/docker_volumes_2.png">
+
+`docker run -p 3000:3000 -v /app/node_modules -v $(pwd):/app <image_id>`
+
+command modification:
+<img src="./images/docker_volumes_3.png">
+
+`-v $(pwd):/app` part means 'map everything from pwd to _app_ folder in container
+
+## Bookmarking volumes
+
+`docker run -p 3000:3000 -v /app/node_modules -v $(pwd):/app <image_id>`
+
+`-v $(pwd):/app` when there is `:` we say map _app_ folder from container to _pwd_ of local files (remember we've deleted node_modules from local files, only container has it)
+`-v /app/node_modules` - when there is no `:` we say don't link to local files, just use files from container
