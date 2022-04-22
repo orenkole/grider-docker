@@ -825,3 +825,8 @@ Restart policies:
 - unless-stopped
 
 note: "no" in quotes, because _no_ in yml is _false_
+
+## Container Status with Docker Compose
+
+`docker-compose ps` - check list of containers
+must be ran from location where _docker-compose.yml_ is located
