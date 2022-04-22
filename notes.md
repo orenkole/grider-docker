@@ -840,3 +840,25 @@ must be ran from location where _docker-compose.yml_ is located
 ## Docker's purpose
 
 <img src="./images/dockers_workflow_1.png">
+
+We can make everything without docker, just with docker it's much easier.
+
+## Project generation
+
+`node -v`
+
+## More on project generation
+
+```d
+npm i -g create-react-app
+nvm ls // check node versions
+nvm use --lts // switch to lts node version
+create-react-app frontend // create react project
+cd frontend
+```
+
+## Necessary commands
+
+`npm run start` - starts up a development server
+`npm run test` - run tests
+`npm run build` - buils a **production** version of the application
