@@ -986,3 +986,13 @@ services:
 
 and build an image
 `docker-compose up`
+
+## Do we need a Copy?
+
+Since we use volumes that are references, we don't have to copy app to container, still we'll leave it as a template (or reminder)
+
+```yml
+COPY . .
+```
+
+## Executing tests
