@@ -1178,7 +1178,45 @@ in /fronend
 ```d
 git init
 git add .
-git commit -m initial commit"
+git commit -m "initial commit"
 git remote add origin https://github.com/orenkole/docker-react.git
 git push origin main
+```
+
+## Travis CI setup
+
+<img src="./images/travis_ci_setup_1.png">
+
+We can do anything with code (even delete repo) with Travis
+
+https://travis-ci.org/
+
+Give permission to github for Travis
+
+## Travis YML file configuration
+
+_.travis.yml_
+<img src="./images/travis_yml_file_configuration_1.png">
+
+_script:_ if status code of command is other than 0, travis will assume fail
+
+_npm run test_ does't provide exit code, it just hangs and waits for input.
+
+we'll type _npm run test -- --coverage_ so the command provides exit code
+
+_./.travis.yml_
+
+```yml
+# superuser permission
+sudo: required
+# install docker into container
+services:
+  - docker
+
+# steps before deploy of before tests run
+before_install:
+  - docker build -t orenkole/grider-docker -f Dockerfile.dev .
+
+script:
+  - docker run orenkole/grider-docker npm run test -- --coverage
 ```

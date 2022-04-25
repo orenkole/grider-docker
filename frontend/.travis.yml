@@ -1,0 +1,12 @@
+# superuser permission
+sudo: required
+# install docker into container
+services:
+  - docker
+
+# steps before deploy of before tests run
+before_install:
+  - docker build -t orenkole/grider-docker -f Dockerfile.dev .
+
+script:
+  - docker run orenkole/grider-docker npm run test -- --coverage
