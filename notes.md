@@ -1055,3 +1055,50 @@ now `docker compose up` starts 2 containers:
 
 run containers:
 `docker compose up --build`
+
+## 72. Shortcomings on testing
+
+For now we are not able to interact with testing container via cli
+
+<img src="./images/shortcomings_on_testing_1.png">
+
+let's create a second terminal window and run _docker attach_ command to forward input from our terminal to specific container
+
+1st terminal: `docker-compose up`
+
+2nd terminal:
+
+```d
+docker ps # copy container id
+docker attach <container_id>
+```
+
+still can't access containers cli to manipulate test suit
+
+Let's start a shell instance inside container:
+
+3rd terminal
+
+```
+docker ps # take container id
+docker exec -it <container_id> sh
+```
+
+<img src="./images/Shortcomings_on_testing_2.png>">
+
+`ps` - show running processes inside container
+
+<img src="./images/Shortcomings_on_testing_3.png">
+
+In reality the main process in container is _npm_ which than starts _npm run test_ process (start.js).
+So we attaching to _npm_, not to _npm run test_ process
+
+<img src="./images/Shortcomings_on_testing_4.png">
+
+`docker attach` is always handle primary process _npm_
+
+Conclusion:
+We 2 options:
+
+- _docker-compose_ with automatically running tests, but without possibility to manipulate running test suit
+- have single running container, Use _docker exec_ to manipulate test suits, but here we need to grab a container id
