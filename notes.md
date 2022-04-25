@@ -1110,3 +1110,42 @@ We 2 options:
 <img src="./images/need_for_nginx_3.png">
 
 We create seperate docker file which will create a production version of a container.
+
+## 74. Multi-step docker builds
+
+<img src="./images/Multi-step_docker_builds_1.png">
+
+We don't need dependencies after build completed
+
+---
+
+We're using node:apline and nginx base images
+
+<img src="./images/Multi-step_docker_builds_2.png">
+
+## 75. Implementing multi-step builds
+
+<img src="./images/Multi-step_docker_builds_2.png">
+
+Each block can have only 1 _FROM_ statement, we can view it like a separator between blocks
+
+Default command of nginx will start nginx for us
+
+Our docker file for production environment
+
+_Dockerfile_
+
+```docker
+# build phase
+FROM node:16-alpine as builder
+WORKDIR '/app'
+COPY package.json .
+RUN npm install
+COPY . .
+# path will be: app / build
+RUN npm run build
+
+FROM nginx
+# copy from _builder_ phase
+COPY --from=builder /app/build  /usr/share/nginx/html
+```
