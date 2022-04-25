@@ -1010,3 +1010,48 @@ Than on Travis CI
 We can use `docker-compose up` to use volumes, than update will be reflected
 
 `docker exec -it <container_id> npm run test`
+
+## 71. Docker compose for running tests
+
+```yml
+command: ["npm", "run", "test"]
+```
+
+_Dockerfile.yml_
+
+```yml
+version: "3"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - .:/app
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    # overwrite starting command
+    command: ["npm", "run", "test"]
+```
+
+now `docker compose up` starts 2 containers:
+
+- for hosting development server
+- for running tests
+
+---
+
+`--build` - if we added a new service
+
+---
+
+run containers:
+`docker compose up --build`
