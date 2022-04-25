@@ -1102,3 +1102,11 @@ We 2 options:
 
 - _docker-compose_ with automatically running tests, but without possibility to manipulate running test suit
 - have single running container, Use _docker exec_ to manipulate test suits, but here we need to grab a container id
+
+## 73. Need for nginx
+
+<img src="./images/need_for_nginx_1.png">
+<img src="./images/need_for_nginx_2.png">
+<img src="./images/need_for_nginx_3.png">
+
+We create seperate docker file which will create a production version of a container.
