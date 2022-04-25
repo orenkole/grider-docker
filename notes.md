@@ -585,6 +585,8 @@ COPY ./ ./
 rebuild image
 `docker build -t orenkole/simpleweb .`
 
+# Docker compose with multiple docker containers
+
 ## App overview
 
 <img src="./images/app_overview_1.png">
@@ -830,6 +832,8 @@ note: "no" in quotes, because _no_ in yml is _false_
 
 `docker-compose ps` - check list of containers
 must be ran from location where _docker-compose.yml_ is located
+
+# Creating a production-grade workflow
 
 ## Development Workflow
 
@@ -1148,4 +1152,33 @@ RUN npm run build
 FROM nginx
 # copy from _builder_ phase
 COPY --from=builder /app/build  /usr/share/nginx/html
+```
+
+## 76. Running nginx
+
+80 - default port of nginx
+`docker build .`
+`docker run -p 8080:80 <container_id>`
+
+# Contimuous integration and deployment with AWS
+
+## Services overview
+
+<img src="./images/services_overview_1.png">
+
+Travis CI - runs tests and automatically deploys to AWS
+
+## Github setup
+
+<img src="./images/github_setup_1.png">
+
+create repo **docker-react**
+in /fronend
+
+```d
+git init
+git add .
+git commit -m initial commit"
+git remote add origin https://github.com/orenkole/docker-react.git
+git push origin main
 ```
