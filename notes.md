@@ -996,3 +996,17 @@ COPY . .
 ```
 
 ## Executing tests
+
+Running tests in development environment
+Than on Travis CI
+
+`docker build -f Dockerfile.dev .`
+`docker run -it <image_id> npm run test`
+
+ <img src="./images/Executing_tests_1.png">
+
+## We'll change number of tests writtend, but the number of executing tests not changing
+
+We can use `docker-compose up` to use volumes, than update will be reflected
+
+`docker exec -it <container_id> npm run test`
