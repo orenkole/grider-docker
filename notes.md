@@ -1242,7 +1242,7 @@ URL of our application: http://dockerreact-env.eba-pmapmmtg.eu-central-1.elastic
 _env_ (common set of configuration):
 <img src="./images/travis_ci_for_deployment_1.png">
 
-_bucker_name_ - when travis desides to deploy codebase, it will taker github repository, zip it and copy to S3 bucket (essential a harddrive running on AWS)
+_bucket_name_ - when travis desides to deploy codebase, it will taker github repository, zip it and copy to S3 bucket (essential a harddrive running on AWS)
 Than elastic will poke at elasticbeanstalk: "I uploaded new zip file. Use it to redeploy app"
 
 https://s3.console.aws.amazon.com/s3/buckets?region=eu-central-1
@@ -1259,7 +1259,7 @@ deploy only if code in _master_ changed:
 
 ```yml
 on:
-  branch: master
+  branch: main
 ```
 
 ## Automated deployment
@@ -1340,3 +1340,9 @@ If we would have a team of engineers
 - create request to master
 - merge to master
 - deploy to AWS
+
+`git checkout -b feature"
+
+_App.js_
+
+\+ I was changed on feature branch
