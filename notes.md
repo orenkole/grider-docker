@@ -1331,3 +1331,12 @@ EXPOSE 80
 # copy from _builder_ phase
 COPY --from=builder /app/build  /usr/share/nginx/html
 ```
+
+## Workflow with github
+
+If we would have a team of engineers
+
+- push changes to feature branch
+- create request to master
+- merge to master
+- deploy to AWS
