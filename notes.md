@@ -1228,3 +1228,85 @@ script:
 ## AWS elastic beanstalk
 
 https://eu-central-1.console.aws.amazon.com/elasticbeanstalk/home?region=eu-central-1#/welcome
+
+select _docker_ for platform
+
+## More on elastic beanstalk
+
+<img src="./images/more_on_elastic_beanstalk.png">
+
+URL of our application: http://dockerreact-env.eba-pmapmmtg.eu-central-1.elasticbeanstalk.com/
+
+## Travis ci for deployment
+
+_env_ (common set of configuration):
+<img src="./images/travis_ci_for_deployment_1.png">
+
+_bucker_name_ - when travis desides to deploy codebase, it will taker github repository, zip it and copy to S3 bucket (essential a harddrive running on AWS)
+Than elastic will poke at elasticbeanstalk: "I uploaded new zip file. Use it to redeploy app"
+
+https://s3.console.aws.amazon.com/s3/buckets?region=eu-central-1
+
+<img src="./images/travis_ci_for_deployment_2.png">
+
+_bucker_path_ - our S3 bucket is use for all beanstalk environments that we create
+
+Chances are that folder for our beanstalk instance automatically. It will be created only after deploy. By default _bucket_path_ is the same as _app_
+
+---
+
+deploy only if code in _master_ changed:
+
+```yml
+on:
+  branch: master
+```
+
+## Automated deployment
+
+IAM - service ot manage api keys used by outside services
+
+find IAM service => add user => select option 'programmatic access' => next => 'attach existing policies directly' => AdministratorAccess-AWSElasticBeanstalk (https://github.com/StephenGrider/DockerCasts/issues/17)
+<img src="./images/automatic_deployment_1.png">
+
+secret access key will be shown just once - save it
+
+---
+
+Use secret keys in travis:
+<img src="./images/automated_deployment_2.png">
+<img src="./images/automated_deployment_3.png">
+
+add to _.travis.yml_ (note double quotes at secret key)
+
+_.travis.yml_
+
+```yml
+# superuser permission
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t orenkole/docker-react -f Dockerfile.dev .
+
+script:
+  - docker run -e CI=true orenkole/docker-react npm run test -- --coverage
+
+deploy:
+  # tell travis that we use travisbeanstalk to preconfigure
+  provider: elasticbeanstalk
+  # regions comes from URL of app: http://dockerreact-env.eba-pmapmmtg.eu-central-1.elasticbeanstalk.com/
+  region: "eu-central-1"
+  # name of the app
+  app: "docker-react"
+  # environment
+  env: "Dockerreact-env"
+  bucket_name: "elasticbeanstalk-eu-central-1-367384751819"
+  bucket_path: "docker-react"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
+```

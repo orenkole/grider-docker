@@ -8,3 +8,20 @@ before_install:
 
 script:
   - docker run -e CI=true orenkole/docker-react npm run test -- --coverage
+
+deploy:
+  # tell travis that we use travisbeanstalk to preconfigure
+  provider: elasticbeanstalk
+  # regions comes from URL of app: http://dockerreact-env.eba-pmapmmtg.eu-central-1.elasticbeanstalk.com/
+  region: "eu-central-1"
+  # name of the app
+  app: "docker-react"
+  # environment
+  env: "Dockerreact-env"
+  bucket_name: "elasticbeanstalk-eu-central-1-367384751819"
+  bucket_path: "docker-react"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
