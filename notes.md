@@ -1220,7 +1220,7 @@ before_install:
   - docker build -t orenkole/grider-docker -f Dockerfile.dev .
 
 script:
-  - docker run orenkole/grider-docker npm run test -- --coverage
+  - docker run -e CI=true orenkole/docker-react npm run test -- --coverage
 ```
 
 **moved _frontend_ folder to https://github.com/orenkole/docker-react repo**
