@@ -1226,3 +1226,5 @@ script:
 **moved _frontend_ folder to https://github.com/orenkole/docker-react repo**
 
 ## AWS elastic beanstalk
+
+https://eu-central-1.console.aws.amazon.com/elasticbeanstalk/home?region=eu-central-1#/welcome
