@@ -1562,3 +1562,9 @@ git push origin main
 ## Application overview
 
 <img src="./images/application_overview_1.png">
+
+## Application overview
+
+<img src="./images/application_architecture_1.png">
+<img src="./images/application_architecture_2.png">
+<img src="./images/application_architecture_3.png">
