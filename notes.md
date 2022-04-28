@@ -1548,3 +1548,15 @@ git push origin main
 6. It should say "Elastic Beanstalk is updating your environment"
 
 7. It should eventually show a green checkmark under "Health". You will now be able to access your application at the external URL provided under the environment name.
+
+# Section 8. Building a multi-container application
+
+## Single Container Deployment Issues
+
+- The app was simple - no outside dependencies (databases, services, etc)
+
+- Our image was built multiple times. It's bad to build image on active built web server
+
+- How do we connect to a database from a container?
+
+## Application overview
