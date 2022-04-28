@@ -1560,3 +1560,5 @@ git push origin main
 - How do we connect to a database from a container?
 
 ## Application overview
+
+<img src="./images/application_overview_1.png">
