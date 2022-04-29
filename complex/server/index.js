@@ -30,14 +30,16 @@ const pgClient = new Pool({
   password: keys.pgPassword,
   port: keys.pgPort
 })
-pgClient.on('error', () => console.log("Lost PG connection"))
 
 /**
  * We MUST create at least 1 table
  * number - name of column. Ceep indexes of fibonnaci elements shown
  */
-pgClient.query('CREATE TABLE IF NOT EXIST values (number INT)')
-  .catch((err) => console.log(err))
+pgClient.on("connect", (client) => {
+  client
+    .query("CREATE TABLE IF NOT EXISTS values (number INT)")
+    .catch((err) => console.error(err));
+});
 
 
   // ================== //
