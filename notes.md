@@ -1744,15 +1744,27 @@ const pgClient = new Pool({
   password: keys.pgPassword,
   port: keys.pgPort,
 });
-pgClient.on("error", () => console.log("Lost PG connection"));
+// ====================== //
+// Postgress client setup //
+// ====================== //
+const { Pool } = require("pg");
+const pgClient = new Pool({
+  user: keys.pgUser,
+  host: keys.pgHost,
+  database: keys.pgDatabase,
+  password: keys.pgPassword,
+  port: keys.pgPort,
+});
 
 /**
  * We MUST create at least 1 table
  * number - name of column. Ceep indexes of fibonnaci elements shown
  */
-pgClient
-  .query("CREATE TABLE IF NOT EXIST values (number INT)")
-  .catch((err) => console.log(err));
+pgClient.on("connect", (client) => {
+  client
+    .query("CREATE TABLE IF NOT EXISTS values (number INT)")
+    .catch((err) => console.error(err));
+});
 
 // ================== //
 // Redis client setup //
@@ -1813,3 +1825,23 @@ app.listen(5000, (err) => {
   console.log("Listening");
 });
 ```
+
+## Generating the react app
+
+`create-react-app client`
+
+## Fetching data in the react app
+
+see on git
+
+## Rendering logic in the app
+
+see on git
+
+## Exporting the Fib class
+
+see on git
+
+## Routing in the react app
+
+see on git
