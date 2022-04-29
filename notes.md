@@ -1624,3 +1624,39 @@ module.exports = {
   redisPort: process.env.REDIS_PORT,
 };
 ```
+
+## Express api setup
+
+`mkdir server`
+
+_server/package.json_
+
+```json
+{
+  "dependencies": {
+    "express": "4.16.3",
+    "pg": "8.0.3",
+    "redis": "2.8.0",
+    "cors": "2.8.4",
+    "nodemon": "1.18.3"
+  },
+  "scripts": {
+    "dev": "nodemon",
+    "start": "node index.js"
+  }
+}
+```
+
+_server/keys.js_
+
+```javascript
+module.exports = {
+  redisHost: process.env.REDIS_HOST,
+  redisPort: process.env.REDIS_PORT,
+  pgUser: process.env.PGUSER,
+  pgHost: process.env.PGHOST,
+  pgDatabase: process.env.PGDATABASE,
+  pgPassword: process.env.PGPASSWORD,
+  pgPort: process.env.PGPORT,
+};
+```
