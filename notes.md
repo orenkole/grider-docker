@@ -1568,3 +1568,59 @@ git push origin main
 <img src="./images/application_architecture_1.png">
 <img src="./images/application_architecture_2.png">
 <img src="./images/application_architecture_3.png">
+
+## Worker process setup
+
+`mkdir complex`
+`mkdir worker`
+
+_workder/package.json_
+
+```json
+{
+  "dependencies": {
+    "nodemon": "1.18.3",
+    "redis": "2.8.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon"
+  }
+}
+```
+
+_workder/index.js_
+
+```javascript
+// keys - configuration to connect to redis
+const keys = require("./keys");
+const redis = require("redis");
+
+const redisClient = redis.createClient({
+  host: keys.redisHost,
+  port: keys.redisPort,
+  // reconnect to redis every 1000 ms
+  retry_strategy: () => 1000,
+});
+
+// sub - subscription
+const sub = redisClient.duplicate();
+
+function fib(index) {
+  if (index < 2) return 1;
+  return fib(index - 1) + fib(index - 2);
+}
+
+sub.on("message", (channel, message) => {
+  redisClient.hset("values", message, fib(parseInt(message)));
+});
+```
+
+workder/keys.js
+
+```javascript
+module.exports = {
+  redisHost: process.env.REDIS_HOST,
+  redisPort: process.env.REDIS_PORT,
+};
+```
