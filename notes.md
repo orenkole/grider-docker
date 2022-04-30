@@ -1986,3 +1986,25 @@ services:
       - PGPASSWORD=postgres_password
       - PGPORT=5432
 ```
+
+## The worker and client services
+
+```yml
+version: "3"
+services:
+  #...
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+```
