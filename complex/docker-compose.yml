@@ -2,3 +2,14 @@ version: "3"
 services:
   postgres:
     image: "postgres:latest"
+  redis:
+    image: "redis:latest"
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      # don't create link to node_modules. Don't redirect node_modules
+      - /app/node_modules
+      # link everything else from 'server' to 'app'
+      - ./server:/app

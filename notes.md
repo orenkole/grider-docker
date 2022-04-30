@@ -1924,3 +1924,5 @@ Take base image from docker hub:
 postgres:
   image: "postgres:latest"
 ```
+
+## Docker compose config
