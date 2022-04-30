@@ -2024,3 +2024,46 @@ Note: server/index.js
 doesn't specify /api/ prefix - this is because we'll customize nginx to chop it
 
 <img src="./images/nginx_path_router_2.png">
+
+## Routing with nginx
+
+<img src="./images/routing_with_nginx_1.png">
+
+We are specifically using _client_ and _server_ right there, because those are the names of the _client_ and _server_ services we put together inside of our _docker_compose_ file
+Remember, any time you make a docker_compose file, the different service names are essentially useas kind of like domains of sorts.
+
+---
+
+## Rename _server_ in _docker_compose_ to _api_
+
+_default.conf_
+`rewrite /api/(.*) /$1 break;` - replace /api/(._) with what was as (._)
+`break` - don't apply any _rewrite_ rules any further
+create file
+
+---
+
+_./default.conf_
+
+```conf
+upstream client {
+  server client:3000;
+}
+
+upstream api {
+  server api:5000;
+}
+
+server {
+  listen 80;
+
+  location / {
+    proxy_pass http://client;
+  }
+
+  location /api {
+    rewrite /api/(.*) /$1 break;
+    proxy_pass http://api;
+  }
+}
+```
