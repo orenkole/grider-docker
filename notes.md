@@ -2093,3 +2093,11 @@ services:
     ports:
       - "3050:80"
 ```
+
+## Starting up docker compose
+
+First time becase redis can start late, _worker_ or _server_ can fail
+_nginx_ also probably will crash first time running
+
+rebuild images: `--build`
+`docker-compose up --build`
