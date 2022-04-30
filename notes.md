@@ -1845,3 +1845,59 @@ see on git
 ## Routing in the react app
 
 see on git
+
+# "Dockerizing" multiple services
+
+## Checkpoint catchup
+
+download zip of code if you want
+
+## Dockerizing a react app - again!
+
+Need to make dev Dockerfiles for each application:
+
+<img src="./images/dockerizing_a_react_app_1.png">
+
+<img src="./images/dockerizing_a_react_app_2.png">
+
+Make sure if we make changes to some code inside the _client, server, worker_ projects, we **don't have to rebuild images** to get those changes into effect.
+
+Dockerfile workflow
+<img src="./images/dockerizing_a_react_app_3.png">
+
+---
+
+_client/Dockerfile.dev_
+
+```docker
+FROM node:16-alpine
+WORKDIR '/app'
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "start"]
+```
+
+```d
+docker build -f Dockerfile.dev .
+// writing image ...
+```
+
+`docker run -it <image_id>`
+
+## Dockerizing generic node apps
+
+_server/Dockerfile.dev, worker/Dockerfile.dev_
+
+```docker
+FROM node:16-alpine
+WORKDIR '/app'
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "dev"]
+```
+
+_server terminal_
+`docker build -f Dockerfile.dev .`
+`docker run <image_id>`
