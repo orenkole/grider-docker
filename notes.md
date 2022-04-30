@@ -2101,3 +2101,9 @@ _nginx_ also probably will crash first time running
 
 rebuild images: `--build`
 `docker-compose up --build`
+
+## Troubleshooting startup bugs
+
+`docker-compose up`
+
+http://localhost:3050/
