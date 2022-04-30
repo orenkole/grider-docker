@@ -1901,3 +1901,26 @@ CMD ["npm", "run", "dev"]
 _server terminal_
 `docker build -f Dockerfile.dev .`
 `docker run <image_id>`
+
+## Adding postgres as a service
+
+docker-compose
+<img src="./images/adding_postgres_as_a_service_2.png">
+The entire point of this Docker compose file is to make sure that it's a lot easier to start up each of these different images as containers with the appropriate arguments.
+
+We need to make sure that the express server is available on some given ports.
+
+We need to make sure that the worker has the ability to connect over to rediscover
+
+We need to make sure that the correct environment variables for connecting to Redis and PostgreSQL are provided to the express server and the worker as well.
+
+<img src="./images/adding_postgres_as_a_service_1.png">
+
+---
+
+Take base image from docker hub:
+
+```yml
+postgres:
+  image: "postgres:latest"
+```
