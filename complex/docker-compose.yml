@@ -3,7 +3,7 @@ services:
   postgres:
     image: "postgres:latest"
   redis:
-    image: "redis:latest"
+    image: "redis:5-alpine3.15"
   server:
     build:
       dockerfile: Dockerfile.dev
@@ -13,3 +13,13 @@ services:
       - /app/node_modules
       # link everything else from 'server' to 'app'
       - ./server:/app
+    environment:
+      # value takes from services:
+      - REDIS_HOST=redis
+      # port from documentation (but can be configured)
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432

@@ -1926,3 +1926,63 @@ postgres:
 ```
 
 ## Docker compose config
+
+see git
+
+## Environment variables with docker compose
+
+When ther server starts up it pull info from environment variables, how to connect to postgres and redis
+
+<img src="./images/environment_variables_with_docker_compose_1.png">
+
+2 syntaxes
+
+- if we use left hand with = sign, the environment variable is read at runtime
+- if we use right hand, without = sign, just specify the name without value, the variable is read from local environment of our computer at runtime and won't be written to source code or docker image
+
+We'll use left hand side and we don't add environment variables directly to our machine
+
+default values are taken from documentation on docker hub:
+
+```yml
+environment:
+  # value takes from services:
+  - REDIS_HOST=redis
+  # port from documentation (but can be configured)
+  - REDIS_PORT=6379
+  - PGUSER=postgres
+  - PGHOST=postgres
+  - PGDATABASE=postgres
+  - PGPASSWORD=postgres_password
+  - PGPORT=5432
+```
+
+_docker_compose.yml_
+
+```yml
+version: "3"
+services:
+  postgres:
+    image: "postgres:latest"
+  redis:
+    image: "redis:latest"
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      # don't create link to node_modules. Don't redirect node_modules
+      - /app/node_modules
+      # link everything else from 'server' to 'app'
+      - ./server:/app
+    environment:
+      # value takes from services:
+      - REDIS_HOST=redis
+      # port from documentation (but can be configured)
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+```
