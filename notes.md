@@ -2067,3 +2067,29 @@ server {
   }
 }
 ```
+
+## Building a custom nginx image
+
+By copying a _nginx.conf_ file
+
+_nginx/Dockerfile.dev_
+
+```docker
+FROM nginx
+# overwrite default file
+COPY ./default.conf /etc/nging/conf.d/default.conf
+```
+
+_docker_compose.yml_
+
+```yml
+services:
+  #...
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - "3050:80"
+```

@@ -1,0 +1,3 @@
+FROM nginx
+# overwrite default file
+COPY ./default.conf /etc/nging/conf.d/default.conf
