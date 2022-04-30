@@ -2008,3 +2008,19 @@ services:
       - /app/node_modules
       - ./worker:/app
 ```
+
+## Nginx path routing
+
+Previously for _client_ we used nginx for production to host production files. Production environment used nginx
+
+Now our development environment will use nginx
+Now we have 2 servers and nginx will decide to what server the request will be provided: react server or express server
+
+<img src="./images/nginx_path_routing_1.png">
+
+---
+
+Note: server/index.js
+doesn't specify /api/ prefix - this is because we'll customize nginx to chop it
+
+<img src="./images/nginx_path_router_2.png">
