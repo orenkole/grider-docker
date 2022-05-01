@@ -2212,3 +2212,27 @@ EXPOSE 3000
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
 ```
+
+## Cleaning up tests
+
+delete tests from App.test
+
+## Github and travis ci setup
+
+<img src="./images/github_and_travis_ci_setup_1.png">
+
+\_/complex (terminal)
+
+```
+git init
+git add .
+git commit -m "initial commit"
+```
+
+create repo `multi-docker-grider`
+
+```
+git remote add origin https://github.com/orenkole/multi-docker-grider.git
+git remote -v
+git push origin master
+```
