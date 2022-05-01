@@ -2236,3 +2236,34 @@ git remote add origin https://github.com/orenkole/multi-docker-grider.git
 git remote -v
 git push origin master
 ```
+
+---
+
+Go to travis ci, settings, sync github accout
+
+add _multi-docker-grider_ repo
+
+## Travis configuration setup
+
+<img src="./images/travis_configuration_setup_1.png">
+
+_./.travis.yml_
+
+```yml
+sudo: required
+services:
+  - docker
+
+before_install:
+  # ./client - build context
+  - docker build -t orenkole/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run orenkole/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t orenkole/multi-client ./client
+  - docker build -t orenkole/multi-nginx ./nginx
+  - docker build -t orenkole/multi-server ./server
+  - docker build -t orenkole/multi-worker ./worker
+```
