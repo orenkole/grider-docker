@@ -2107,3 +2107,18 @@ rebuild images: `--build`
 `docker-compose up`
 
 http://localhost:3050/
+
+<img src="./images/troubleshooting_startup_bugs_1.png">
+Because anytime our react app wants to keep connection to our development server and it notifies everytime any file changes.
+It impacts the performance connection
+
+---
+
+504 Gateway Time-out
+https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/18069829#questions/15607650
+
+## Opening websocket connection
+
+We must setup nginx to allow though websocket connections
+
+Also replaced my code with https://github.com/StephenGrider/multi-docker
