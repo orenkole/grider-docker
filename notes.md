@@ -2133,3 +2133,11 @@ _nginx/default.conf_
     proxy_set_header Connection "Upgrade";
   }
 ```
+
+## Production multi-container deployments
+
+<img src="./images/production_multi-container_deployments_1.png">
+<img src="./images/production_multi-container_deployments_2.png">
+
+All cloud services are able to pull images from docker hub
+Instead of pushing whole project to elastic beanstalk, docker will signal that it pushed it to docker hub
