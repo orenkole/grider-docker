@@ -2267,3 +2267,36 @@ after_success:
   - docker build -t orenkole/multi-server ./server
   - docker build -t orenkole/multi-worker ./worker
 ```
+
+## Pushing images to docker hub
+
+https://app.travis-ci.com/github/orenkole/multi-docker-grider/settings
+
+_DOCKER_ID_ and _DOCKER_PASSWORD_
+
+_./.travis.yml_
+
+```yml
+after_success:
+  #...
+  - docker build -t orenkole/multi-client ./client
+  - docker build -t orenkole/multi-nginx ./nginx
+  - docker build -t orenkole/multi-server ./server
+  - docker build -t orenkole/multi-worker ./worker
+  # Log in to the docker CLI
+  # echo "$DOCKER_PASSWORD" - retrieve docker password from environment varible and emit it over standard in as input to the next command (on the other side of |)
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those image and push the to docker hub
+  - docker push orenkole/multi-client
+  - docker push orenkole/multi-nginx
+  - docker push orenkole/multi-server
+  - docker push orenkole/multi-worker
+```
+
+_/complex (terminal)_
+
+```d
+git add .
+git commit -m "Pushing images to docker hub"
+git push origin master
+```
