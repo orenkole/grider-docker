@@ -2122,3 +2122,14 @@ https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lect
 We must setup nginx to allow though websocket connections
 
 Also replaced my code with https://github.com/StephenGrider/multi-docker
+
+_nginx/default.conf_
+
+```
+  location /sockjs-node {
+    proxy_pass http://client;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+  }
+```
