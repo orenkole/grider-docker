@@ -2179,3 +2179,36 @@ COPY ./default.conf /etc/nginx/conf.d/default.conf
 <img src="./images/multiple_nginx_instances_1.png">
 <img src="./images/multiple_nginx_instances_2.png">
 <img src="./images/multiple_nginx_instances_3.png">
+
+We could instead have just 1 nginx that server react production files and makes routing, but it is more convinient to have separate nginx instances, because for example react can be served not by nginx
+
+## Altering nginx's listen port
+
+_/client/nginx/default.conf_
+
+```
+server {
+  listen: 3000;
+
+  location / {
+    root /usr/share/nginx/html;
+    index index.html index.html;
+  }
+}
+```
+
+_/client/Dockerfile_
+
+```docker
+FROM node:16-alpine as builder
+WORKDIR '/app'
+COPY ./package.son ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx
+EXPOSE 3000
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/build /usr/share/nginx/html
+```
