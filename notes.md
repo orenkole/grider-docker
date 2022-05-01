@@ -2173,3 +2173,9 @@ _nginx/Dockerfile_
 FROM nginx
 COPY ./default.conf /etc/nginx/conf.d/default.conf
 ```
+
+## Multiple nginx instances
+
+<img src="./images/multiple_nginx_instances_1.png">
+<img src="./images/multiple_nginx_instances_2.png">
+<img src="./images/multiple_nginx_instances_3.png">
