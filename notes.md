@@ -2141,3 +2141,35 @@ _nginx/default.conf_
 
 All cloud services are able to pull images from docker hub
 Instead of pushing whole project to elastic beanstalk, docker will signal that it pushed it to docker hub
+
+## Production dockerfiles
+
+We change just _dev_ to _start_
+_workder/Dockerfile_
+
+```docker
+FROM node:alpine
+WORKDIR "/app"
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "start"]
+```
+
+_server/Dockerfile_
+
+```docker
+FROM node:alpine
+WORKDIR "/app"
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "start"]
+```
+
+_nginx/Dockerfile_
+
+```docker
+FROM nginx
+COPY ./default.conf /etc/nginx/conf.d/default.conf
+```
