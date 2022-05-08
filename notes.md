@@ -2277,20 +2277,30 @@ _DOCKER_ID_ and _DOCKER_PASSWORD_
 _./.travis.yml_
 
 ```yml
+sudo: required
+services:
+  - docker
+
+before_install:
+  # ./client - build context
+  - docker build -t orenkole/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run orenkole/react-test npm test -- --coverage
+
 after_success:
-  #...
-  - docker build -t orenkole/multi-client ./client
-  - docker build -t orenkole/multi-nginx ./nginx
-  - docker build -t orenkole/multi-server ./server
-  - docker build -t orenkole/multi-worker ./worker
-  # Log in to the docker CLI
+  - docker build -t qb64kqjepetz1g/multiclient ./client
+  - docker build -t qb64kqjepetz1g/multinginx ./nginx
+  - docker build -t qb64kqjepetz1g/multiserver ./server
+  - docker build -t qb64kqjepetz1g/multiworker ./worker
+  # Log in to the docker CLI (test)
   # echo "$DOCKER_PASSWORD" - retrieve docker password from environment varible and emit it over standard in as input to the next command (on the other side of |)
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin docker.io
   # Take those image and push the to docker hub
-  - docker push orenkole/multi-client
-  - docker push orenkole/multi-nginx
-  - docker push orenkole/multi-server
-  - docker push orenkole/multi-worker
+  - docker push qb64kqjepetz1g/multiclient
+  - docker push qb64kqjepetz1g/multinginx
+  - docker push qb64kqjepetz1g/multiserver
+  - docker push qb64kqjepetz1g/multiworker
 ```
 
 _/complex (terminal)_
@@ -2300,3 +2310,20 @@ git add .
 git commit -m "Pushing images to docker hub"
 git push origin master
 ```
+
+**Note**: name of docker image must include docker hub id
+
+## Successful image building
+
+## Multi-contaner definition files
+
+Elastic beans talk when has single docker file, will build automatically
+<img src="./images/Multi-contaner_definition_files_1.png">
+
+When there several containers for beanstalk we have to provide addiotional configuration
+<img src="./images/Multi-contaner_definition_files_2.png">
+
+_Docker.aws.json_ is similar to _docker_compose.yml_
+<img src="./images/Multi-contaner_definition_files_3.png">
+
+for _Docker.aws.json_ we don't tell how to build images, we already have them in docker hub. Just pull image
