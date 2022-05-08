@@ -2327,3 +2327,9 @@ _Docker.aws.json_ is similar to _docker_compose.yml_
 <img src="./images/Multi-contaner_definition_files_3.png">
 
 for _Docker.aws.json_ we don't tell how to build images, we already have them in docker hub. Just pull image
+
+## Finding Docs on Container Definitions
+
+Amazon Elastic Container Service (ECS) is a separate service
+
+<img src="./images/Finding_Docs_on_Container_Definitions_1.png">
